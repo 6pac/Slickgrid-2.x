@@ -927,10 +927,10 @@ if (typeof Slick === "undefined") {
             $canvasBottomL.width(canvasWidthL);
           }
         }
-
-        viewportHasHScroll = (canvasWidth >= viewportW - scrollbarDimensions.width);
       }
 
+      viewportHasHScroll = (canvasWidth >= viewportW - scrollbarDimensions.width);
+ 
       $headerRowSpacerL.width(canvasWidth + (viewportHasVScroll ? scrollbarDimensions.width : 0));
       $headerRowSpacerR.width(canvasWidth + (viewportHasVScroll ? scrollbarDimensions.width : 0));
 
@@ -4320,9 +4320,6 @@ if (typeof Slick === "undefined") {
     }
 
     function handleScroll() {
-      // autoheight does not have scrolling, but editors can trigger a scroll, which we should ignore
-      if (options.autoHeight) return;
-      
       scrollTop = $viewportScrollContainerY[0].scrollTop;
       scrollLeft = $viewportScrollContainerX[0].scrollLeft;
       return _handleScroll(false);
@@ -4377,7 +4374,10 @@ if (typeof Slick === "undefined") {
         }
       }
 
-      if (vScrollDist) {
+      // autoheight suppresses vertical scrolling, but editors can create a div larger than 
+      // the row vertical size, which can lead to a vertical scroll bar appearing temporarily
+      // while the editor is displayed. this is not part of the grid scrolling, so we should ignore it
+      if (vScrollDist && !options.autoHeight) {
         vScrollDir = prevScrollTop < scrollTop ? 1 : -1;
         prevScrollTop = scrollTop;
 
